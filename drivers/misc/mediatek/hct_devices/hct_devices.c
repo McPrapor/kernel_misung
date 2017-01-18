@@ -15,7 +15,6 @@
 #include <linux/hct_board_config.h>
 
 #include "hct_devices.h"
-#include "Cust_Memory_type.h"
 
 #define HCT_DEVICE "hct_device"
 #define HCT_VERSION "hct6737-65-m0-mp1-v2.55.6"
