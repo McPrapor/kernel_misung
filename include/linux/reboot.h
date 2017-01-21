@@ -63,6 +63,10 @@ extern void kernel_restart_prepare(char *cmd);
 extern void kernel_restart(char *cmd);
 extern void kernel_halt(void);
 extern void kernel_power_off(void);
+#if 0 //defined(__HCT_KERNEL_POWERONOFF_CONTROL_SUPPORT__)
+extern void kernel_restart_ext(char *cmd);
+extern void kernel_power_off_ext(void);
+#endif
 
 extern int C_A_D; /* for sysctl */
 void ctrl_alt_del(void);

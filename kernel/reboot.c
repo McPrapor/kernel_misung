@@ -225,6 +225,29 @@ void kernel_restart(char *cmd)
 }
 EXPORT_SYMBOL_GPL(kernel_restart);
 
+#if 0 //defined(__HCT_KERNEL_POWERONOFF_CONTROL_SUPPORT__)
+void kernel_restart_ext(char *cmd)
+{
+	migrate_to_reboot_cpu();
+	syscore_shutdown();
+	if (!cmd)
+		pr_emerg("Restarting system\n");
+	else
+		pr_emerg("Restarting system with command '%s'\n", cmd);
+	kmsg_dump(KMSG_DUMP_RESTART);
+	machine_restart(cmd);
+}
+EXPORT_SYMBOL_GPL(kernel_restart_ext);
+void kernel_power_off_ext(void)
+{
+	migrate_to_reboot_cpu();
+	syscore_shutdown();
+	pr_emerg("Power down\n");
+	kmsg_dump(KMSG_DUMP_POWEROFF);
+	machine_power_off();
+}
+EXPORT_SYMBOL_GPL(kernel_power_off_ext);
+#endif
 static void kernel_shutdown_prepare(enum system_states state)
 {
 	blocking_notifier_call_chain(&reboot_notifier_list,

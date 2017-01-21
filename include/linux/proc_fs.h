@@ -76,6 +76,9 @@ static inline int remove_proc_subtree(const char *name, struct proc_dir_entry *p
 
 struct net;
 
+ extern int tpd_special_enable_ps(int enable);
+
+
 static inline struct proc_dir_entry *proc_net_mkdir(
 	struct net *net, const char *name, struct proc_dir_entry *parent)
 {

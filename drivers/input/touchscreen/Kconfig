@@ -463,6 +463,9 @@ config TOUCHSCREEN_MK712
 	  To compile this driver as a module, choose M here: the
 	  module will be called mk712.
 
+config TOUCHSCREEN_MTK_GSL968
+	bool "GSL968_BIRD_C for Mediatek package"
+	default n
 config TOUCHSCREEN_HP600
 	tristate "HP Jornada 6xx touchscreen"
 	depends on SH_HP6XX && SH_ADC
