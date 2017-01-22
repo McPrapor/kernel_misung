@@ -47,7 +47,6 @@ static DEFINE_MUTEX(i2c_access);
 
 #if GTP_GESTURE_WAKEUP
 char tpgesture_value[10]={};
-char tpgesture_status_value[5] = {};
 char tpgesture_status = 0;
 #endif
 #if TPD_HAVE_BUTTON
@@ -916,25 +915,23 @@ static void tpd_resume(struct device *h)
 #if GTP_GESTURE_WAKEUP
 static ssize_t show_tpgesture_value(struct device* dev, struct device_attribute *attr, char *buf)
 {
-	printk("show tp gesture value is %s \n",tpgesture_value);
+	printk("show tp gesture value is %s\n",tpgesture_value);
 	return scnprintf(buf, PAGE_SIZE, "%s\n", tpgesture_value);
 }
 static ssize_t show_tpgesture_status_value(struct device* dev, struct device_attribute *attr, char *buf)
 {
-	printk("show tp gesture status is %s \n",tpgesture_status_value);
-	return scnprintf(buf, PAGE_SIZE, "%s\n", tpgesture_status_value);
+	printk("show tp gesture status is %i\n",tpgesture_status);
+	return scnprintf(buf, PAGE_SIZE, "%i\n", tpgesture_status);
 }
 static ssize_t store_tpgesture_status_value(struct device* dev, struct device_attribute *attr, const char *buf, size_t count)
 {
-	if(!strncmp(buf, "on", 2))
+	if (!strncmp(buf, "1", 1))
 	{
-		sprintf(tpgesture_status_value,"on");
-		tpgesture_status = 1;//status --- on
+		tpgesture_status = 1; //status --- on
 	}
 	else
 	{
-		sprintf(tpgesture_status_value,"off");
-		tpgesture_status = 0;//status --- off
+		tpgesture_status = 0; //status --- off
 	}
 	return count;
 }
