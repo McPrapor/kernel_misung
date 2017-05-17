@@ -1267,6 +1267,16 @@ static int kpd_pdrv_probe(struct platform_device *pdev)
 
 	if (kpd_dts_data.kpd_sw_rstkey)
 		__set_bit(kpd_dts_data.kpd_sw_rstkey, kpd_input_dev->keybit);
+		
+#ifdef CONFIG_TOUCHSCREEN_PREVENT_SLEEP
+#ifdef CONFIG_TOUCHSCREEN_SMARTWAKE
+	smartwake_setdev(kpd_input_dev);
+#endif
+#ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
+	doubletap2wake_setdev(kpd_input_dev);
+#endif
+#endif
+
 #ifdef KPD_KEY_MAP
 	__set_bit(KPD_KEY_MAP, kpd_input_dev->keybit);
 #endif
