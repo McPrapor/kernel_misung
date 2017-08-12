@@ -221,6 +221,7 @@ static ssize_t set_config(struct device *dev, struct device_attribute *attr, con
 	int timing;
 	int trans_num;
 	int trans_auxlen;
+
 	int data_len;
 	int number = 0;
 	int length = 0;
@@ -243,6 +244,7 @@ static ssize_t set_config(struct device *dev, struct device_attribute *attr, con
 		if ((address != 0) && (operation <= 2)) {
 			/* data_len is transfer bytes, offset address + write data */
 			length = 2 * data_len;
+
 			if (operation == 0) {
 				ext_flag |= I2C_WR_FLAG;
 				number = (trans_auxlen << 8) | (length >> 1);	/* /TODO:need to confitm 8 Or 16 */
@@ -436,7 +438,7 @@ static DEVICE_ATTR(ut, 0660, show_config, set_config);
 static int i2c_common_probe(struct platform_device *pdev)
 {
 	int ret = 0;
-	/* your code here£¬your should save client in your own way */
+	/* your code hereï¿½ï¿½your should save client in your own way */
 	I2CLOG("i2c_common device probe\n");
 	ret = device_create_file(&pdev->dev, &dev_attr_ut);
 	return ret;
