@@ -2581,6 +2581,8 @@ WLAN_STATUS wlanUpdateNetworkAddress(IN P_ADAPTER_T prAdapter)
 	P_WIFI_CMD_T prWifiCmd;
 	P_CMD_BASIC_CONFIG prCmdBasicConfig;
 	UINT_32 u4SysTime;
+	UINT_32 i;
+	UINT_16 temp = 0;
 
 	DEBUGFUNC("wlanUpdateNetworkAddress");
 
@@ -2598,14 +2600,29 @@ WLAN_STATUS wlanUpdateNetworkAddress(IN P_ADAPTER_T prAdapter)
 #if CFG_SHOW_MACADDR_SOURCE
 		DBGLOG(INIT, TRACE, "Using dynamically generated MAC address");
 #endif
-		/* dynamic generate */
-		u4SysTime = kalGetTimeTick();
 
-		rMacAddr[0] = 0x00;
-		rMacAddr[1] = 0x08;
-		rMacAddr[2] = 0x22;
+		for (i = 0 ; i < PARAM_MAC_ADDR_LEN ; i += sizeof(UINT_16)) {
+			kalCfgDataReadMacAddr(i, &temp);
+			rMacAddr[i] = temp&0xff;
+			rMacAddr[i+1] = (temp>>8)&0xff;
+		}
 
-		kalMemCopy(&rMacAddr[3], &u4SysTime, 3);
+		if (EQUAL_MAC_ADDR(aucZeroMacAddr, rMacAddr)) {
+			/* dynamic generate */
+			u4SysTime = kalGetTimeTick();
+
+			rMacAddr[0] = 0x00;
+			rMacAddr[1] = 0x08;
+			rMacAddr[2] = 0x22;
+
+			kalMemCopy(&rMacAddr[3], &u4SysTime, 3);
+
+			for (i = 0 ; i < PARAM_MAC_ADDR_LEN ; i += sizeof(UINT_16)) {
+			  temp = rMacAddr[i+1]<<8;
+			  temp += rMacAddr[i];
+			  kalCfgDataWriteMacAddr(i, temp);
+			}
+		}
 	} else {
 #if CFG_SHOW_MACADDR_SOURCE
 		DBGLOG(INIT, INFO, "Using host-supplied MAC address");
@@ -5734,4 +5751,3 @@ integer_part:
 	}
 	return u4Ret;
 }
-

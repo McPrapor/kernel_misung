@@ -745,6 +745,17 @@ BOOLEAN kalCfgDataRead16(IN P_GLUE_INFO_T prGlueInfo, IN UINT_32 u4Offset, OUT P
 
 BOOLEAN kalCfgDataWrite16(IN P_GLUE_INFO_T prGlueInfo, IN UINT_32 u4Offset, IN UINT_16 u2Data);
 
+BOOLEAN
+kalCfgDataReadMacAddr(
+    IN UINT_32          u4Offset,
+    OUT PUINT_16        pu2Data
+    );
+BOOLEAN
+kalCfgDataWriteMacAddr(
+    UINT_32             u4Offset,
+    UINT_16             u2Data
+    );
+
 /*----------------------------------------------------------------------------*/
 /* WSC Connection                                                     */
 /*----------------------------------------------------------------------------*/

@@ -46,6 +46,7 @@
 #define WIFI_NVRAM_FILE_NAME   "/data/nvram/APCFG/APRDEB/WIFI"
 #endif
 #define WIFI_NVRAM_CUSTOM_NAME "/data/nvram/APCFG/APRDEB/WIFI_CUSTOM"
+#define WIFI_NVRAM_CUSTOM_MAC_ADDR	"/data/nvram/APCFG/APRDEB/CUSTOM1"
 
 /*******************************************************************************
 *                             D A T A   T Y P E S
@@ -491,4 +492,40 @@ BOOLEAN kalCfgDataWrite16(IN P_GLUE_INFO_T prGlueInfo, UINT_32 u4Offset, UINT_16
 	} else {
 		return TRUE;
 	}
+}
+
+BOOLEAN
+kalCfgDataReadMacAddr(
+    IN UINT_32          u4Offset,
+    OUT PUINT_16        pu2Data
+    )
+{
+    if(pu2Data == NULL) {
+        return FALSE;
+    }
+    if(nvram_read(WIFI_NVRAM_CUSTOM_MAC_ADDR,
+                (char *)pu2Data,
+                sizeof(unsigned short),
+                u4Offset) != sizeof(unsigned short)) {
+        return FALSE;
+    }
+    else {
+        return TRUE;
+    }
+}
+BOOLEAN
+kalCfgDataWriteMacAddr(
+    UINT_32             u4Offset,
+    UINT_16             u2Data
+    )
+{
+    if(nvram_write(WIFI_NVRAM_CUSTOM_MAC_ADDR,
+                (char *)&u2Data,
+                sizeof(unsigned short),
+                u4Offset) != sizeof(unsigned short)) {
+        return FALSE;
+    }
+    else {
+        return TRUE;
+    }
 }
