@@ -1,15 +1,14 @@
 /*
-** Id: @(#) p2p_scan.c@@
-*/
-
-/*! \file   "p2p_scan.c"
-    \brief  This file defines the p2p scan profile and the processing function of
-	    scan result for SCAN Module.
-
-    The SCAN Profile selection is part of SCAN MODULE and responsible for defining
-    SCAN Parameters - e.g. MIN_CHANNEL_TIME, number of scan channels.
-    In this file we also define the process of SCAN Result including adding, searching
-    and removing SCAN record from the list.
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
 /*******************************************************************************
@@ -607,10 +606,11 @@ scanP2pUpdateBssChannel(IN UINT_8 ucHwChannel,
 			     IN P_HIF_RX_HEADER_T prHifRxHdr,
 			     IN P_BSS_DESC_T prBssDesc)
 {
-	DBGLOG(P2P, INFO, "[channel] hw:ds:ht: %d:%d:%d\n",
+	DBGLOG(P2P, INFO, "[channel] hw:ds:ht: band: %d:%d:%d:%d\n",
 			ucHwChannel,
 			ucDsChannel,
-			ucHtChannel);
+			ucHtChannel,
+			prBssDesc->eBand);
 	if (prBssDesc->eBand == BAND_2G4) {
 
 		/* Update RCPI if in right channel */
@@ -684,6 +684,18 @@ scanP2pGetBssChannel(IN P_SW_RFB_T prSwRfb,
 }
 
 VOID
+scanP2pUpdateBssBand(IN UINT_8 ucDsChannel,
+			     IN UINT_8 ucHtChannel,
+			     IN P_BSS_DESC_T prBssDesc)
+{
+	if ((ucDsChannel >= 1 && ucDsChannel <= 14)
+		|| (ucHtChannel >= 1 && ucHtChannel <= 14))
+		prBssDesc->eBand = BAND_2G4;
+	else
+		prBssDesc->eBand = BAND_5G;
+}
+
+VOID
 scanP2pProcessBeaconAndProbeResp(IN P_ADAPTER_T prAdapter,
 				 IN P_SW_RFB_T prSwRfb,
 				 IN P_WLAN_STATUS prStatus,
@@ -720,21 +732,24 @@ scanP2pProcessBeaconAndProbeResp(IN P_ADAPTER_T prAdapter,
 
 			ASSERT_BREAK((prSwRfb != NULL) && (prBssDesc != NULL));
 
+			ucHwChannel = HIF_RX_HDR_GET_CHNL_NUM(prSwRfb->prHifRxHdr);
+			/*
+			 * Should update channel information separately
+			 */
+			scanP2pGetBssChannel(prSwRfb, &ucDsChannel, &ucHtChannel);
+
 			if (((prWlanBeaconFrame->u2FrameCtrl & MASK_FRAME_TYPE) != MAC_FRAME_PROBE_RSP)) {
 				/* Only report Probe Response frame to supplicant. */
 				/* Probe response collect much more information. */
 
 				if (fgIsSkipThisBeacon || prBssDesc->eBand == BAND_2G4)
 					break;
+
+				prBssDesc->eBand = HIF_RX_HDR_GET_RF_BAND(prSwRfb->prHifRxHdr);
+			} else {
+				scanP2pUpdateBssBand(ucDsChannel, ucHtChannel, prBssDesc);
 			}
 
-			ucHwChannel = HIF_RX_HDR_GET_CHNL_NUM(prSwRfb->prHifRxHdr);
-			prBssDesc->eBand = HIF_RX_HDR_GET_RF_BAND(prSwRfb->prHifRxHdr);
-
-			/*
-			 * Should update channel information separately
-			 */
-			scanP2pGetBssChannel(prSwRfb, &ucDsChannel, &ucHtChannel);
 			scanP2pUpdateBssChannel(ucHwChannel, ucDsChannel, ucHtChannel,
 						prSwRfb->prHifRxHdr,
 						prBssDesc);
