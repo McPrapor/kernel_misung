@@ -108,7 +108,7 @@
 
 #define GTP_POWER_CTRL_SLEEP  0	// turn off power on suspend
 #define GTP_ICS_SLOT_REPORT   0
-#define GTP_CREATE_WR_NODE    1	// create the interface to support gtp_tools
+#define GTP_CREATE_WR_NODE    0	// create the interface to support gtp_tools
 
 #if defined(__HCT_CONFIG_TPD_PROXIMITY__)
 #if __HCT_CONFIG_TPD_PROXIMITY__
@@ -640,4 +640,3 @@ extern int gt1x_parse_chr_cfg(int sensor_id);
 #endif
 
 #endif // _GT1X_GENERIC_H_
-

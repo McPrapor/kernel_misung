@@ -28,7 +28,7 @@
 
 #define __HCT_AW9136_TS_SUPPORT__ HCT_NO
 
-#define __HCT_GTP_HOTKNOT__    HCT_YES
+#define __HCT_GTP_HOTKNOT__    HCT_NO
 
 #define __HCT_BATTERY_PROTECT_SUPPORT__ HCT_NO
 /*############### SPEAKER releated config #####################*/
