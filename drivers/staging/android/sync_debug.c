@@ -100,7 +100,7 @@ static void sync_print_pt(struct seq_file *s, struct sync_pt *pt, bool fence)
 
 	/**
 	 *  [MTK] {{{
-	 *  It may be not safe if invoke fence_is_signaled_locked which may
+	 *  It may be not save if invoke fence_is_signaled_locked which may
 	 *  invoke fence_signal_lock. Hence we only check if the fence has been
 	 *  signaled or not.
 	 */
