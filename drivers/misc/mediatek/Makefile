@@ -183,9 +183,7 @@ ifneq ($(wildcard $(srctree)/drivers/misc/mediatek/cpu_stress/),)
 obj-$(CONFIG_MTK_CPU_STRESS)	+= cpu_stress/
 endif
 
-obj-$(CONFIG_HCT_DEVICE_INFO_SUPPORT)  += hct_devices/
 obj-$(CONFIG_HCT_FINGERPRINT_SUPPORT)  += fingerprint/
 
 
 obj-$(CONFIG_PWR_LOSS_MTK_SPOH) += power-loss-test/
-

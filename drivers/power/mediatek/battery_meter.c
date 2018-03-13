@@ -1987,11 +1987,7 @@ int get_Ubvbat2(void)
     ubvbat1=simple_strtol(ptr,NULL,10);
     return ubvbat1;
 } 
-char hct_battery_info[120];
-char hct_temp_info[50];
 s32 fgauge_compensate_battery_voltage_recursion(s32 ori_voltage, s32 recursion_time);
-
-extern void hct_add_display_info(char * buffer, int lenth);
 
 void dod_init(void)
 {
@@ -2005,15 +2001,10 @@ void dod_init(void)
 #endif				/* #if defined(IS_BATTERY_REMOVE_BY_PMIC) */
 	gFG_capacity_by_sw_ocv = gFG_capacity_by_v;
 
-	sprintf(hct_battery_info,"sw_ocv=[%d,%d],",gFG_voltage,gFG_capacity_by_v_init);
-
 	/* use get_hw_ocv----------------------------------------------------------------- */
 	ret = battery_meter_ctrl(BATTERY_METER_CMD_GET_HW_OCV, &gFG_voltage);
 	gFG_capacity_by_v = fgauge_read_capacity_by_v(gFG_voltage);
 
-
-      sprintf(hct_temp_info,"hw_ocv=[%d,%d]", gFG_voltage,gFG_capacity_by_v);
-      strcat(hct_battery_info, hct_temp_info);
       bm_print(BM_LOG_CRTI, "[dod_init] get_hw_ocv=%d, HW_SOC=%d, SW_SOC = %d,rtc=%d\n",
            gFG_voltage, gFG_capacity_by_v, gFG_capacity_by_v_init,get_rtc_spare_fg_value());
 
@@ -2062,9 +2053,6 @@ void dod_init(void)
           ubvbat2_soc = fgauge_read_capacity_by_v(ubvbat2);
      }
 
-      sprintf(hct_temp_info,"ub_ocv=[%d,%d],", ubvbat2,ubvbat2_soc);
-      strcat(hct_battery_info, hct_temp_info);
-
      if(ubvbat2_soc!=0 && (gFG_capacity_by_v>ubvbat2_soc))
      {
        if((gFG_capacity_by_v-ubvbat2_soc)>5)
@@ -2072,11 +2060,6 @@ void dod_init(void)
      }
 
 #endif
-
-      sprintf(hct_temp_info,"rtc_soc=[%d] bat_rm=%d", g_rtc_fg_soc,is_battery_remove_pmic());
-      strcat(hct_battery_info, hct_temp_info);
-
-       hct_add_display_info(hct_battery_info,strlen(hct_battery_info)+1);
 
 #if defined(IS_BATTERY_REMOVE_BY_PMIC)
 /*
@@ -2203,11 +2186,6 @@ if (((g_rtc_fg_soc != 0)
 		gFG_capacity_by_v = g_rtc_fg_soc;
 	}
 #endif
-#endif
-
-#if 1
-    sprintf(hct_temp_info,"fnal soc=[%d] boot_m=%d", gFG_capacity_by_v,get_boot_reason());
-    hct_add_display_info(hct_temp_info,strlen(hct_temp_info)+1);
 #endif
 
 #if defined(SW_OAM_INIT_V2)

@@ -53,16 +53,6 @@
 /* PMIC */
 #include <linux/regulator/consumer.h>
 #endif
-#ifdef CONFIG_HCT_DEVICE_INFO_SUPPORT
-//#include "hct_devices.h"
-extern int hct_set_camera_device_used(char * module_name, int pdata);
-typedef enum 
-{ 
-    DEVICE_SUPPORTED = 0,        
-    DEVICE_USED = 1,
-}campatible_type;
-
-#endif
 
 /* Camera information */
 #define PROC_CAMERA_INFO "driver/camera_info"
@@ -1414,9 +1404,6 @@ static inline int adopt_CAMERA_HW_CheckIsAlive(void)
 
 					PK_INF(" Sensor found ID = 0x%x\n", sensorID);
 					snprintf(mtk_ccm_name, sizeof(mtk_ccm_name), "%s CAM[%d]:%s;", mtk_ccm_name, g_invokeSocketIdx[i], g_invokeSensorNameStr[i]);
-                    #ifdef CONFIG_HCT_DEVICE_INFO_SUPPORT
-                    hct_set_camera_device_used(g_invokeSensorNameStr[i], (int)g_invokeSocketIdx[i]);
-                    #endif
 					err = ERROR_NONE;
 					if (DUAL_CAMERA_MAIN_SENSOR == g_invokeSocketIdx[i])
 					{
@@ -4435,8 +4422,3 @@ module_exit(CAMERA_HW_i2C_exit);
 MODULE_DESCRIPTION("CAMERA_HW driver");
 MODULE_AUTHOR("Jackie Su <jackie.su@Mediatek.com>");
 MODULE_LICENSE("GPL");
-
-
-
-
-

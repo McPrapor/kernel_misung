@@ -4,21 +4,7 @@
 
 struct acc_context *acc_context_obj = NULL;
 
-
 static struct acc_init_info *gsensor_init_list[MAX_CHOOSE_G_NUM] = { 0 };
-
-#ifdef CONFIG_HCT_DEVICE_INFO_SUPPORT
-typedef enum 
-{ 
-    DEVICE_SUPPORTED = 0,        
-    DEVICE_USED = 1,
-}campatible_type;
-
-extern int hct_set_accsensor_device_used(char * module_name, int pdata);
-extern int hct_accsensor_device_add(struct acc_init_info* maccsensor, campatible_type isUsed);
-//#include "hct_devices.h"
-#endif
-
 
 static int64_t getCurNS(void)
 {
@@ -512,9 +498,6 @@ static int acc_real_driver_init(void)
 			if (0 == err) {
 				ACC_LOG(" acc real driver %s probe ok\n",
 					gsensor_init_list[i]->name);
-#ifdef CONFIG_HCT_DEVICE_INFO_SUPPORT
-	      hct_set_accsensor_device_used(gsensor_init_list[i]->name, 1);
-#endif
 				break;
 			}
 		}
@@ -546,9 +529,6 @@ int acc_driver_add(struct acc_init_info *obj)
 		if (NULL == gsensor_init_list[i]) {
 			obj->platform_diver_addr = &gsensor_driver;
 			gsensor_init_list[i] = obj;
-#ifdef CONFIG_HCT_DEVICE_INFO_SUPPORT
-		   hct_accsensor_device_add(obj,DEVICE_SUPPORTED);
-#endif
 			break;
 		}
 	}

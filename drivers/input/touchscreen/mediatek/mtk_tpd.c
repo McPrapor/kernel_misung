@@ -31,17 +31,6 @@
 #include <linux/compat.h>
 #endif
 
-#ifdef CONFIG_HCT_DEVICE_INFO_SUPPORT
-//#include "hct_devices.h"
-extern int hct_set_touch_device_used(char * module_name, int pdata);
-typedef enum 
-{ 
-    DEVICE_SUPPORTED = 0,        
-    DEVICE_USED = 1,
-}campatible_type;
-extern int hct_touchpanel_device_add(struct tpd_driver_t* mTouch, campatible_type isUsed);
-#endif
-
 #ifdef CONFIG_AW9136_SUPPORT
 extern int AW9136_ts_init(void);
 extern void AW9136_ts_exit(void);
@@ -462,9 +451,6 @@ int tpd_driver_add(struct tpd_driver_t *tpd_drv)
 	if (tpd_drv == NULL)
 		return -1;
 	tpd_drv->tpd_have_button = tpd_dts_data.use_tpd_button;
-    #ifdef CONFIG_HCT_DEVICE_INFO_SUPPORT
-        hct_touchpanel_device_add(tpd_drv,DEVICE_SUPPORTED);
-    #endif
 	/* R-touch */
 	if (strcmp(tpd_drv->tpd_device_name, "generic") == 0) {
 		tpd_driver_list[0].tpd_device_name = tpd_drv->tpd_device_name;
@@ -642,9 +628,6 @@ static int tpd_probe(struct platform_device *pdev)
 				TPD_DMESG("[mtk-tpd]tpd_probe, tpd_driver_name=%s\n",
 					  tpd_driver_list[i].tpd_device_name);
 				g_tpd_drv = &tpd_driver_list[i];
-#ifdef CONFIG_HCT_DEVICE_INFO_SUPPORT
-	            hct_set_touch_device_used(g_tpd_drv->tpd_device_name, 0);
-#endif
 				break;
 			}
 		}

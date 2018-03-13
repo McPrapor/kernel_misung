@@ -454,10 +454,6 @@
 
 / {
 
-hct_device: hct_device{
-	compatible				= "mediatek,hct_devices";
-};
-
 #if __HCT_BREATH_LIGHT_SUPPORT__
 aw2013_dev: aw2013_dev{
 	compatible = "mediatek,aw2013_dev";

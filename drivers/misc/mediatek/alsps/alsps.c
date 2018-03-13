@@ -6,17 +6,6 @@ struct platform_device *pltfm_dev;
 
 static struct alsps_init_info *alsps_init_list[MAX_CHOOSE_ALSPS_NUM] = {0};
 
-#ifdef CONFIG_HCT_DEVICE_INFO_SUPPORT
-typedef enum 
-{ 
-    DEVICE_SUPPORTED = 0,        
-    DEVICE_USED = 1,
-}campatible_type;
-
-extern int hct_set_alspssensor_device_used(char * module_name, int pdata);
-extern int hct_alspssensor_device_add(struct alsps_init_info* malspssensor, campatible_type isUsed);
-//#include "hct_devices.h"
-#endif
 static bool alsps_misc_dev_init;
 
 int als_data_report(struct input_dev *dev, int value, int status)
@@ -689,9 +678,6 @@ static int alsps_real_driver_init(void)
 			err = alsps_init_list[i]->init();
 			if (0 == err) {
 				ALSPS_LOG(" alsps real driver %s probe ok\n", alsps_init_list[i]->name);
-#ifdef CONFIG_HCT_DEVICE_INFO_SUPPORT
-	      hct_set_alspssensor_device_used(alsps_init_list[i]->name, 1);
-#endif
 				break;
 			}
 		}
@@ -726,9 +712,6 @@ int alsps_driver_add(struct alsps_init_info *obj)
 		if (NULL == alsps_init_list[i]) {
 			obj->platform_diver_addr = &als_ps_driver;
 			alsps_init_list[i] = obj;
-#ifdef CONFIG_HCT_DEVICE_INFO_SUPPORT
-		   hct_alspssensor_device_add(obj,DEVICE_SUPPORTED);
-#endif
 			break;
 		}
 	}
@@ -1093,4 +1076,3 @@ late_initcall(alsps_init);
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("ALSPS device driver");
 MODULE_AUTHOR("Mediatek");
-
