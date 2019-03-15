@@ -351,6 +351,18 @@ initrd=0x44000000,0x300000 loglevel=8 androidboot.hardware=mt6735";
 		#size-cells = <1>;
 		ranges;
 
+                touch_panel: touch_panel {
+                        compatible = "mediatek, touch_panel-eint";
+                };
+
+                mse: mse {
+                        compatible = "mediatek, mse-eint";
+                };
+
+                camera_gpio_flashlight: camera_gpio_flashlight@ {
+                        compatible = "mediatek,gpio_control_flash";
+                };
+
 		chipid@08000000 {
 			compatible = "mediatek,chipid";
 			reg = <0x08000000 0x0004>,
