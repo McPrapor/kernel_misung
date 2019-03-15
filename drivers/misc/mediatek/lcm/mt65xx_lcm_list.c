@@ -297,6 +297,15 @@ LCM_DRIVER *lcm_driver_list[] = {
 #if defined(HCT_ILI9881C_DSI_VDO_HD_CPT_55_OT)
 	&hct_ili9881c_dsi_vdo_hd_cpt_55_ot,
 #endif
+
+#if defined(HX8394D_HD720_DSI_VDO_TRULY_V36)
+	&hx8394d_hd720_dsi_vdo_truly_v36_drv,
+#endif
+
+#if defined(HX8394F_HD720_DSI_VDO_TRULY_V36)
+	&hx8394f_hd720_dsi_vdo_truly_v36_drv,
+#endif
+
 #endif
 };
 

@@ -241,6 +241,8 @@ extern LCM_DRIVER hct_otm1282a_dsi_vdo_hd_auo_50_kl;
 extern LCM_DRIVER hct_rm68200_dsi_vdo_hd_auo_50_ykl;
 extern LCM_DRIVER hct_ili9881_dsi_vdo_hd_cpt;
 extern LCM_DRIVER hct_hx8394f_dsi_vdo_hd_cmi;
+extern LCM_DRIVER hx8394d_hd720_dsi_vdo_truly_v36_drv;
+extern LCM_DRIVER hx8394f_hd720_dsi_vdo_truly_v36_drv;
 #endif
 
 #ifdef BUILD_LK
