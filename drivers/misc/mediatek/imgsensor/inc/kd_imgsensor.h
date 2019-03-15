@@ -97,6 +97,14 @@ NSFeature :  : RAWSensorInfo < _id >  :  : getFlickerPara \
 *
 ********************************************************************************/
 /* SENSOR CHIP VERSION */
+/* V36BML */
+#define S5K3L2_SENSOR_ID                      0x30c2
+#define S5K3L2XX_SENSOR_ID                      S5K3L2_SENSOR_ID
+#define S5K3L2XXV36_SENSOR_ID                      0x30c2
+#define OV13850V36_SENSOR_ID                       0xD850
+#define OV5670V36MIPI_SENSOR_ID                    0x5670
+#define S5K5E8YX_SENSOR_ID                                      0x5e80
+#define S5K5E8YXV36_SENSOR_ID                                   0x5e80
 /*IMX*/
 #define IMX377_SENSOR_ID                        0x0377
 #define IMX278_SENSOR_ID                        0x0278
@@ -299,6 +307,11 @@ NSFeature :  : RAWSensorInfo < _id >  :  : getFlickerPara \
 /* CAMERA DRIVER NAME */
 #define CAMERA_HW_DEVNAME                       "kd_camera_hw"
 /* SENSOR DEVICE DRIVER NAME */
+/* V36BML */
+#define SENSOR_DRVNAME_OV13850V36_MIPI_RAW         "ov13850v36mipiraw"
+#define SENSOR_DRVNAME_OV5670V36_MIPI_RAW          "ov5670v36mipiraw"
+#define SENSOR_DRVNAME_S5K3L2XXV36_MIPI_RAW          "s5k3l2xxv36mipiraw"
+#define SENSOR_DRVNAME_S5K5E8YXV36_MIPI_RAW        "s5k5e8yxv36mipiraw"
 /*IMX*/
 #define SENSOR_DRVNAME_IMX377_MIPI_RAW          "imx377mipiraw"
 #define SENSOR_DRVNAME_IMX278_MIPI_RAW          "imx278mipiraw"

@@ -9,3 +9,9 @@ config MTK_EFUSE_DOWNGRADE
   default n
   help
     CONFIG_MTK_EFUSE_DOWNGRADE
+
+config V36BML_CAMERA
+  bool CONFIG_V36BML_CAMERA
+  default n
+  help
+    HTC v36bml camera related option
