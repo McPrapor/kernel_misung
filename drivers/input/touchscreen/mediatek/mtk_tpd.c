@@ -31,12 +31,6 @@
 #include <linux/compat.h>
 #endif
 
-#ifdef CONFIG_AW9136_SUPPORT
-extern int AW9136_ts_init(void);
-extern void AW9136_ts_exit(void);
-#endif
-
-
 #if defined(CONFIG_MTK_S3320) || defined(CONFIG_MTK_S3320_50) \
 	|| defined(CONFIG_MTK_S3320_47) || defined(CONFIG_MTK_MIT200) \
 	|| defined(CONFIG_TOUCHSCREEN_SYNAPTICS_S3528) || defined(CONFIG_MTK_S7020)
@@ -55,7 +49,7 @@ struct tpd_filter_t tpd_filter;
 struct tpd_dts_info tpd_dts_data;
 struct pinctrl *pinctrl1;
 struct pinctrl_state *pins_default;
-struct pinctrl_state *eint_as_int, *eint_output0, *eint_output1, *rst_output0, *rst_output1, *eint_as_int_bias_dis;
+struct pinctrl_state *eint_as_int, *eint_output0, *eint_output1, *rst_output0, *rst_output1;
 struct of_device_id touch_of_match[] = {
 	{ .compatible = "mediatek,mt6735-touch", },
 	{ .compatible = "mediatek,mt6580-touch", },
@@ -65,8 +59,6 @@ struct of_device_id touch_of_match[] = {
 	{ .compatible = "mediatek,mt8163-touch", },
 	{},
 };
-
-static struct platform_device *tpd_pltfm_dev;
 
 void tpd_get_dts_info(void)
 {
@@ -113,34 +105,10 @@ void tpd_get_dts_info(void)
 }
 
 static DEFINE_MUTEX(tpd_set_gpio_mutex);
-/*HCT_Jay_Note:
-tpd_gpio_as_int  :              set touch EINT with PULL UP Enable
-tpd_gpio_as_int_bias_dis:   set touch EINT with PULL UP disable
-*/
 void tpd_gpio_as_int(int pin)
 {
-    if(IS_ERR(eint_as_int))
-    {
-        pr_err( "ERROR!!!! CTP eint_as_int set failed!!!!\n");
-        return;
-    }
-
 	mutex_lock(&tpd_set_gpio_mutex);
 	TPD_DEBUG("[tpd]tpd_gpio_as_int\n");
-	if (pin == 1)
-		pinctrl_select_state(pinctrl1, eint_as_int);
-	mutex_unlock(&tpd_set_gpio_mutex);
-}
-
-void tpd_gpio_as_int_bias_dis(int pin)
-{
-      if(IS_ERR(eint_as_int_bias_dis))
-      {
-          pr_err( "ERROR!!!! tpd_gpio_as_int_bias_dis set failed!!!!\n");
-          return;
-      }
-	mutex_lock(&tpd_set_gpio_mutex);
-	TPD_DEBUG("[tpd]tpd_gpio_as_int_bias_dis\n");
 	if (pin == 1)
 		pinctrl_select_state(pinctrl1, eint_as_int);
 	mutex_unlock(&tpd_set_gpio_mutex);
@@ -156,12 +124,10 @@ void tpd_gpio_output(int pin, int level)
 		else
 			pinctrl_select_state(pinctrl1, eint_output0);
 	} else {
-	#if !defined(CONFIG_TOUCHSCREEN_SYNAPTICS_OPPO)
 		if (level)
 			pinctrl_select_state(pinctrl1, rst_output1);
 		else
 			pinctrl_select_state(pinctrl1, rst_output0);
-	#endif	
 	}
 	mutex_unlock(&tpd_set_gpio_mutex);
 }
@@ -199,7 +165,6 @@ int tpd_get_gpio_info(struct platform_device *pdev)
 		dev_err(&pdev->dev, "fwq Cannot find touch pinctrl state_eint_output1!\n");
 		return ret;
 	}
-#if !defined(CONFIG_TOUCHSCREEN_SYNAPTICS_OPPO)
 	rst_output0 = pinctrl_lookup_state(pinctrl1, "state_rst_output0");
 	if (IS_ERR(rst_output0)) {
 		ret = PTR_ERR(rst_output0);
@@ -212,15 +177,6 @@ int tpd_get_gpio_info(struct platform_device *pdev)
 		dev_err(&pdev->dev, "fwq Cannot find touch pinctrl state_rst_output1!\n");
 		return ret;
 	}
-#endif
-
-	eint_as_int_bias_dis = pinctrl_lookup_state(pinctrl1, "state_eint_as_int_bias_dis");
-	if (IS_ERR(eint_as_int_bias_dis)) {
-		ret = PTR_ERR(eint_as_int_bias_dis);
-		dev_err(&pdev->dev, "fwq Cannot find touch pinctrl state_eint_as_int!\n");
-		return ret;
-	}
-        
 	TPD_DEBUG("[tpd%d] mt_tpd_pinctrl----------\n", pdev->id);
 	return 0;
 }
@@ -509,19 +465,11 @@ static void tpd_create_attributes(struct device *dev, struct tpd_attrs *attrs)
 		device_create_file(dev, attrs->attr[--num]);
 }
 
-
-struct platform_device *get_tpd_platformdev(void)
-{
-	return tpd_pltfm_dev;
-}
-
-
 /* touch panel probe */
 static int tpd_probe(struct platform_device *pdev)
 {
 	int touch_type = 1;	/* 0:R-touch, 1: Cap-touch */
 	int i = 0;
-      int error=0;
 #ifndef CONFIG_CUSTOM_LCM_X
 #ifdef CONFIG_LCM_WIDTH
 	unsigned long tpd_res_x = 0, tpd_res_y = 0;
@@ -531,18 +479,9 @@ static int tpd_probe(struct platform_device *pdev)
 
 	TPD_DMESG("enter %s, %d\n", __func__, __LINE__);
 
-      tpd_pltfm_dev = pdev;
-
 	if (misc_register(&tpd_misc_device))
 		pr_err("mtk_tpd: tpd_misc_device register failed\n");
-	error= tpd_get_gpio_info(pdev);
-       if(error)
-       {
-             pr_err("ERROR!!!!,tpd_get_gpio_info get dts failed!!!!!, pls check");
-	#if !defined(CONFIG_TOUCHSCREEN_SYNAPTICS_OPPO)
-             return -1;
-	#endif
-       }
+	tpd_get_gpio_info(pdev);
 	tpd = kmalloc(sizeof(struct tpd_device), GFP_KERNEL);
 	if (tpd == NULL)
 		return -ENOMEM;
@@ -690,9 +629,6 @@ static int tpd_probe(struct platform_device *pdev)
 	if (g_tpd_drv->attrs.num)
 		tpd_create_attributes(&pdev->dev, &g_tpd_drv->attrs);
 
-#ifdef CONFIG_AW9136_SUPPORT
-      AW9136_ts_init();
-#endif
 	return 0;
 }
 static int tpd_remove(struct platform_device *pdev)
@@ -712,23 +648,12 @@ static int __init tpd_device_init(void)
 	return 0;
 }
 
-void hct_tpd_suspend(void)
-{
-    if(g_tpd_drv->suspend)
-       g_tpd_drv->suspend(NULL);
-    tpd_suspend_flag = 1;
-}
-
 /* should never be called */
 static void __exit tpd_device_exit(void)
 {
 	TPD_DMESG("MediaTek touch panel driver exit\n");
 	/* input_unregister_device(tpd->dev); */
 	platform_driver_unregister(&tpd_driver);
-    
-#ifdef CONFIG_AW9136_SUPPORT
-    AW9136_ts_exit();
-#endif
 }
 
 late_initcall(tpd_device_init);

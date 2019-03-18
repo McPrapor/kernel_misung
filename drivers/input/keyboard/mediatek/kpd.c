@@ -157,14 +157,14 @@ static struct platform_driver hall_pdrv = {
 
 #if defined(CONFIG_HCT_TP_GESTRUE)||__HCT_TP_GESTURE_SUPPORT__
 #define TP_GESTURE_KEY                                 KEY_PROG3
-extern void hct_tpd_suspend(void);
+//extern void hct_tpd_suspend(void);
 void tpgesture_hander(void)
 {
        printk("tpgesture_handler report key\n");
        input_report_key(kpd_input_dev, TP_GESTURE_KEY, 1);
        input_report_key(kpd_input_dev, TP_GESTURE_KEY, 0);
        input_sync(kpd_input_dev);
-       hct_tpd_suspend();
+//       hct_tpd_suspend();
 }
 #endif
 
