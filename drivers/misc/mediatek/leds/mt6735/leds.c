@@ -81,7 +81,11 @@ static int button_flag_isink3;
 struct wake_lock leds_suspend_lock;
 
 char *leds_name[MT65XX_LED_TYPE_TOTAL] = {
-	"red",
+#ifndef CONFIG_V36BML_LED
+        "red",
+#else
+        "amber",
+#endif
 	"green",
 	"blue",
 	"jogball-backlight",
@@ -99,12 +103,15 @@ struct cust_mt65xx_led *pled_dtsi = NULL;
 /****************************************************************************
  * DEBUG MACROS
  ***************************************************************************/
+
 static int debug_enable_led_hal = 1;
 #define LEDS_DEBUG(format, args...) do { \
 	if (debug_enable_led_hal) {	\
 		pr_debug("[LED]"format, ##args);\
 	} \
 } while (0)
+
+//#define LEDS_DEBUG(format, args...) printk("[LED]"format , ##args)
 
 /*****************PWM *************************************************/
 #define PWM_DIV_NUM 8
@@ -566,10 +573,15 @@ int mt_led_blink_pmic(enum mt65xx_led_pmic pmic_type, struct nled_setting *led)
 		pmic_set_register_value(PMIC_RG_DRV_ISINK0_CK_PDN, 0);
 		pmic_set_register_value(PMIC_RG_DRV_ISINK0_CK_CKSEL, 0);
 		pmic_set_register_value(PMIC_ISINK_CH0_MODE, ISINK_PWM_MODE);
+#ifdef CONFIG_V36BML_LED
+                        pmic_set_register_value(PMIC_ISINK_CH0_STEP,ISINK_0);//4mA
+                        pmic_set_register_value(PMIC_ISINK_CH0_STEP,ISINK_2);//12mA for A51B
+#else
 #ifdef __HCT_BLINK_PMIC_ISINK_CH0_STEP__
 		pmic_set_register_value(PMIC_ISINK_CH0_STEP, __HCT_BLINK_PMIC_ISINK_CH0_STEP__);
 #else
 		pmic_set_register_value(PMIC_ISINK_CH0_STEP, ISINK_3);	/* 16mA */
+#endif
 #endif
 		pmic_set_register_value(PMIC_ISINK_DIM0_DUTY, duty);
 		pmic_set_register_value(PMIC_ISINK_DIM0_FSEL,
@@ -580,10 +592,15 @@ int mt_led_blink_pmic(enum mt65xx_led_pmic pmic_type, struct nled_setting *led)
 		pmic_set_register_value(PMIC_RG_DRV_ISINK1_CK_PDN, 0);
 		pmic_set_register_value(PMIC_RG_DRV_ISINK1_CK_CKSEL, 0);
 		pmic_set_register_value(PMIC_ISINK_CH1_MODE, ISINK_PWM_MODE);
+#ifdef CONFIG_V36BML_LED
+	        pmic_set_register_value(PMIC_ISINK_CH1_STEP,ISINK_2);//4mA
+                pmic_set_register_value(PMIC_ISINK_CH1_STEP,ISINK_1);//8mA for A51B
+#else
 #ifdef __HCT_BLINK_PMIC_ISINK_CH1_STEP__
 		pmic_set_register_value(PMIC_ISINK_CH1_STEP, __HCT_BLINK_PMIC_ISINK_CH1_STEP__);
 #else
 		pmic_set_register_value(PMIC_ISINK_CH1_STEP, ISINK_3);	/* 16mA */
+#endif
 #endif
 		pmic_set_register_value(PMIC_ISINK_DIM1_DUTY, duty);
 		pmic_set_register_value(PMIC_ISINK_DIM1_FSEL,
@@ -763,7 +780,12 @@ int mt_brightness_set_pmic(enum mt65xx_led_pmic pmic_type, u32 level, u32 div)
 		pmic_set_register_value(PMIC_RG_DRV_32K_CK_PDN, 0x0);	/* Disable power down */
 		pmic_set_register_value(PMIC_RG_DRV_ISINK0_CK_PDN, 0);
 		pmic_set_register_value(PMIC_RG_DRV_ISINK0_CK_CKSEL, 0);
+#ifdef CONFIG_V36BML_LED
 		pmic_set_register_value(PMIC_ISINK_CH0_MODE, ISINK_PWM_MODE);
+                        pmic_set_register_value(PMIC_ISINK_CH0_STEP,ISINK_0);//4mA
+                        pmic_set_register_value(PMIC_ISINK_CH0_STEP,ISINK_2);//12mA for A51B
+                        pmic_set_register_value(PMIC_ISINK_DIM0_DUTY,15);
+#else
 #ifdef __HCT_PMIC_ISINK_CH0_STEP__
 		pmic_set_register_value(PMIC_ISINK_CH0_STEP, __HCT_PMIC_ISINK_CH0_STEP__);	
 #else
@@ -773,6 +795,7 @@ int mt_brightness_set_pmic(enum mt65xx_led_pmic pmic_type, u32 level, u32 div)
 		pmic_set_register_value(PMIC_ISINK_DIM0_DUTY, __HCT_PMIC_ISINK_DIM0_DUTY__);	
 #else
 		pmic_set_register_value(PMIC_ISINK_DIM0_DUTY, 15);
+#endif
 #endif
 		pmic_set_register_value(PMIC_ISINK_DIM0_FSEL, ISINK_1KHZ);	/* 1KHz */
 		if (level)
@@ -798,7 +821,12 @@ int mt_brightness_set_pmic(enum mt65xx_led_pmic pmic_type, u32 level, u32 div)
 		pmic_set_register_value(PMIC_RG_DRV_32K_CK_PDN, 0x0);	/* Disable power down */
 		pmic_set_register_value(PMIC_RG_DRV_ISINK1_CK_PDN, 0);
 		pmic_set_register_value(PMIC_RG_DRV_ISINK1_CK_CKSEL, 0);
+#ifdef CONFIG_V36BML_LED
 		pmic_set_register_value(PMIC_ISINK_CH1_MODE, ISINK_PWM_MODE);
+                        pmic_set_register_value(PMIC_ISINK_CH1_STEP,ISINK_2);//4mA
+                        pmic_set_register_value(PMIC_ISINK_CH1_STEP,ISINK_1);//8mA for A51B
+                        pmic_set_register_value(PMIC_ISINK_DIM1_DUTY,15);
+#else
 #ifdef __HCT_PMIC_ISINK_CH1_STEP__
 		pmic_set_register_value(PMIC_ISINK_CH1_STEP, __HCT_PMIC_ISINK_CH1_STEP__);	
 #else
@@ -808,6 +836,7 @@ int mt_brightness_set_pmic(enum mt65xx_led_pmic pmic_type, u32 level, u32 div)
 		pmic_set_register_value(PMIC_ISINK_DIM1_DUTY, __HCT_PMIC_ISINK_DIM1_DUTY__);	
 #else
 		pmic_set_register_value(PMIC_ISINK_DIM1_DUTY, 15);
+#endif
 #endif
 		pmic_set_register_value(PMIC_ISINK_DIM1_FSEL, ISINK_1KHZ);	/* 1KHz */
 		if (level)

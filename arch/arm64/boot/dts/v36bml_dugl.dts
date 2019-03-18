@@ -12,6 +12,9 @@
                         size = <0 0x7010000>;
                 };
 	};
+	mtk_leds: mtk_leds@bus{
+        	compatible                              = "mediatek,mtk_leds";
+	};
         bus {
                 compatible = "simple-bus";
                 #address-cells = <1>;
