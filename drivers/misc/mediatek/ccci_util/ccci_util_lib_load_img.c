@@ -1165,7 +1165,20 @@ static int load_image(int md_id, struct ccci_image_info *img_inf, char post_fix[
 			ret = load_std_firmware(md_id, filp, img);
 			if (ret < 0) {
 				CCCI_UTIL_INF_MSG_WITH_ID(md_id, "load_firmware failed: ret=%d!\n", ret);
-				goto out;
+#ifdef CONFIG_V36BML_ECCCI_FIRMWARE_LEGACY
+                                CCCI_UTIL_INF_MSG_WITH_ID(md_id, "V36BML_LEGACY firmware check offset: 64 data_sec_length: 300 sec_tail_length: 236 \n");
+                                img->offset = 64;
+                                img->tail_length = 236;
+                                ret = load_std_firmware(md_id, filp, img);
+                                if (ret < 0) {
+                                        CCCI_UTIL_INF_MSG_WITH_ID(md_id, "V36BML_LEGACY load_firmware failed: ret=%d!\n", ret);
+                                        goto out;
+                                } else {
+                                        CCCI_UTIL_INF_MSG_WITH_ID(md_id, "V36BML_LEGACY firmware check OK\n");
+                                }
+#else
+                                goto out;
+#endif
 			}
 #ifdef ENABLE_MD_IMG_SECURITY_FEATURE
 		}
